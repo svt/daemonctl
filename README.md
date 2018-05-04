@@ -1,14 +1,3 @@
-#### SVT Open Source Project Template Instructions
-
-1. Create a new project.
-2. [Copy these files into the new project](#installation)
-3. Update the README, replacing the contents below as prescribed.
-4. If working with an existing code base, answer the questions on the [open source checklist](opensource-checklist.md)
-5. Delete these instructions and everything up to the _Project Title_ from the README.
-6. Write some great software and tell people about it.
-
-> Keep the README fresh! It's the first thing people see and will make the initial impression.
-
 # Daemon Control (daemonctl)
 
 **Description**:  A python framework and tools to manage small applications
