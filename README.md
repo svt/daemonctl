@@ -65,7 +65,6 @@ Usage: daemonctl [options] <command> [daemon]
       -c CONFIG, --config=CONFIG
       -a, --showall         Show hidden
       -v, --version         Print version
-
 ```
 ## Known issues
 
