@@ -21,7 +21,7 @@ sudo ./setup.py install
 configfile in /usr/local/etc/daemonctl.conf (or where DAEMONCTL is installed)
 
 Configformat:
-`
+```
 logpath = logdir # Path to directory where log files will be placed
 pidpath = piddir # Path to directory where pid files will be placed
 modules {
@@ -36,9 +36,11 @@ modules {
   runas = username # Run daemon as this user
  }
 }
-`
+```
+
 ## Usage
 
+```
 Usage: daemonctl [options] <command> [daemon]
      Commands:
         start        Start daemons
@@ -64,6 +66,7 @@ Usage: daemonctl [options] <command> [daemon]
       -a, --showall         Show hidden
       -v, --version         Print version
 
+```
 ## Known issues
 
 The code is very messy
