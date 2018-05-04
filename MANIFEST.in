@@ -1,0 +1,4 @@
+include *.py
+include src/daemonctl.conf
+include src/daemonctl.init
+include src/daemonctl.complete

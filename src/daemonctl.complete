@@ -1,0 +1,48 @@
+# bash completion for daemonctl
+
+_daemonctl()
+{
+    local cur prev words cword split=false
+    #_init_completion -s -n : || return
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    words="$COMP_WORDS"
+    cword="$COMP_CWORD"
+
+
+    case $prev in
+        start|stop|restart|status|disable|hide|tail|less|csvstatus)
+            DAEMONS="$(daemonctl csvstatus all|cut -d, -f1|sed 1d)"
+            COMPREPLY=($( compgen -W "$DAEMONS all" -- "$cur"))
+            return 0
+            ;;
+        show)
+            DAEMONS="$(daemonctl csvstatus all -a|cut -d, -f1|sed 1d)"
+            COMPREPLY=($( compgen -W "$DAEMONS" -- "$cur"))
+            return 0
+            ;;
+        -c)
+            compopt -o filenames
+            COMPREPLY=( $( compgen -f -- "$cur" ) )
+            return 0
+            ;;
+    esac
+
+    $split && return 0
+
+    if [[ $cword -eq 1 ]]; then
+        COMMANDS=$(daemonctl|awk '{print $1}'|sed 1,2d)
+        COMPREPLY=( $( compgen -W "$COMMANDS" -- "$cur" ) )
+    else
+        case ${cur[0]} in
+            -*)
+                OPTS="-h -f -r -g -e -c -a -v --help --force --regex --glob --exact --config --showall --version"
+                COMPREPLY=( $( compgen -W "$OPTS" -- "$cur" ) )
+                ;;
+        esac
+    fi
+} &&
+complete -F _daemonctl daemonctl
+
+# ex: ts=4 sw=4 et filetype=sh

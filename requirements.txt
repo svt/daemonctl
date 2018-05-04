@@ -1,0 +1,2 @@
+--index-url http://stoweb06:8080/simple
+-e .

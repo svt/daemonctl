@@ -1,0 +1,32 @@
+#!/bin/bash
+# Skapad av Andreas åkerlund (anau)
+# Startar "/usr/local/scripts/daemonctl/daemonctl start all"
+### BEGIN INIT INFO
+# Provides:       daemonctl
+# Required-Start: $remote_fs $syslog
+# Required-Stop:  $remote_fs $syslog
+# Default-Start:  3 5
+# Default-Stop:   0 1 2 6
+# Description:    Starts all daemons in daemonctl
+### END INIT INFO
+
+export LC_ALL=en_US.UTF-8
+export PATH=$PATH:/usr/bin:/usr/local/bin
+case $1 in
+start)
+        daemonctl start all
+        ;;
+stop)
+        daemonctl stop all
+        ;;
+restart)
+        daemonctl restart all
+        ;;
+status)
+        daemonctl status
+        ;;
+*)
+        echo "Usage: $0 <start|stop|restart|status>"
+        ;;
+esac
+
