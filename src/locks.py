@@ -2,6 +2,27 @@
 # coding: utf8
 # vim: ts=4 sw=4 et bg=dark
 
+"""
+  This file is part of daemonctl.
+  Copyright (C) 2018 SVT
+  
+  daemonctl is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+ 
+  daemonctl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with daemonctl.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+
+
+
 import os,sys
 from time import time,sleep
 if sys.version_info[0] >= 3:
@@ -103,3 +124,4 @@ class FileLock:
 
     def close(self):
         self.unlock()
+
