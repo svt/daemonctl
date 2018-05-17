@@ -5,6 +5,27 @@
 # Module for handling fancy logging
 #
 
+"""
+  This file is part of daemonctl.
+  Copyright (C) 2018 SVT
+  
+  daemonctl is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+ 
+  daemonctl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with daemonctl.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+
+
+
 from sys import exc_info
 from threading import current_thread
 from traceback import format_exc, format_exception, format_stack
@@ -84,4 +105,5 @@ if __name__ == '__main__':
     def apa2():
         apa()
     apa2()
+
 
