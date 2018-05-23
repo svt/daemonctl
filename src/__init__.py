@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim: ts=4 sw=4 et bg=dark
 
-__version__ = '1.3.7a3'
+__version__ = '1.3.8a1'
 
 appname = "daemonctl"
 appdesc = "Utility and framework for simplifying application deployment and operation"
@@ -13,4 +13,5 @@ dependencies = []
 scripts = [
     "daemonctl = daemonctl.main:main",
     "dpiptool = daemonctl.piptool:main",
+    "dctlmods = daemonctl.modules:main",
 ]

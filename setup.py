@@ -8,7 +8,10 @@ from setuptools import setup
 import src
 
 def read(filename):
-    return open(os.path.join(os.path.dirname(__file__),filename)).read()
+    try:
+        return open(os.path.join(os.path.dirname(__file__),filename)).read()
+    except:
+        return "Missing readme"
 package = src.appname
 scripts = getattr(src,"scripts",[])
 daemonctl = getattr(src,"daemonctl",[])

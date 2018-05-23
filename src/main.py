@@ -386,6 +386,17 @@ def main():
             execcmd = "msgctl --id %(id)s --stopfile %(stopfile)s",
         )
         modules["msgctl"] = msgctl
+    elif not "msgctl" in modules:
+        # Builtin msgctl replacement
+        dctlmods = dict(
+            name = "%(id)s",
+            type = "dynamic",
+            loop = "True",
+            interval = "5",
+            listcmd = "dctlmods --list",
+            execcmd = "dctlmods --id %(id)s --stopfile %(stopfile)s",
+        )
+        modules["dctlmods"] = dctlmods
             
 
     for modname,mod in modules.items():
