@@ -2,6 +2,27 @@
 # -*- coding: utf8 -*-
 # vim: ts=4 sw=4 et bg=dark
 
+"""
+  This file is part of daemonctl.
+  Copyright (C) 2018 SVT
+  
+  daemonctl is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+ 
+  daemonctl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with daemonctl.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+
+
+
 # Module for loading modules through pip entry points (daemonctl.modules entry group)
 
 from pkg_resources import iter_entry_points
@@ -145,3 +166,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

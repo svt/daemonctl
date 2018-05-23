@@ -11,6 +11,7 @@
 
  - python >= 2.6
  - setprocname: to have cleaner names in ps for the daemons (not required)
+ - fast-entry_points
 
 ## Installation
 
@@ -82,8 +83,11 @@ Feature request with documentation, fixes, new features and general beutificatio
 
 ## Open source licensing info
 
+Copyright: SVT 2018
 GNU General Public License version 3
 [LICENSE](LICENSE)
 
-----
+except for [fastentrypoints.py](https://github.com/ninjaaron/fast-entry_points) which is Copyright (c) 2016, Aaron Christianson 
+
+---
 
