@@ -155,7 +155,7 @@ def init(modulename=None, autoreload=False, usecfg=True,cfgtypes=False,logformat
                 cfgname = modulename
             else:
                 cfgname = usecfg
-            configfile = os.path.join(opts.configpath,modulename+".conf")
+            configfile = os.path.join(opts.configpath,cfgname+".conf")
             if os.path.exists(configfile):
                 try:
                     cfg = Config(configfile,autotypes=cfgtypes)

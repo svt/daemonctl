@@ -27,10 +27,10 @@ import errno
 import json
 from daemonctl import dts
 
+myvenv = os.environ.get("VIRTUAL_ENV","")
+
 dts.add_option("--list",help="List all modules",action="store_true")
 dts.init("dctlmods",usecfg=False)
-
-
 
 def msgctlCompat():
     import msgctl
@@ -46,6 +46,8 @@ class ModuleHandler:
     def __init__(self):
         self.modulepaths = ["/opt/daemonctl/modules","/usr/local/scripts/msgctl/modules"]
         self.moduleextentions = ["",".py",".pyc",".sh"]
+        if myvenv:
+            self.modulepaths.append(myvenv+"/modules")
     def createPaths(self):
         for path in self.modulepaths:
             try:

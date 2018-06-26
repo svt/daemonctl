@@ -48,7 +48,8 @@ try:
 except:
     setproctitle = lambda x: None
 
-configpath = os.environ.get("DAEMONCTL_CONFIG","/usr/local/etc/daemonctl.conf")
+myvenv = os.environ.get("VIRTUAL_ENV","")
+configpath = os.environ.get("DAEMONCTL_CONFIG",myvenv+"/usr/local/etc/daemonctl.conf")
 
 op = OptionParser()
 op.add_option("-f","--force",action="store_true",default=False)
@@ -80,12 +81,12 @@ except:
     cfg = Config(defaultconfig)
 #os.nice(10)
 
-logdir = cfg.logpath
-piddir = cfg.pidpath
+logdir = myvenv+cfg.logpath
+piddir = myvenv+cfg.pidpath
 if not os.path.exists(logdir):
-    os.mkdir(logdir)
+    os.makedirs(logdir)
 if not os.path.exists(piddir):
-    os.mkdir(piddir)
+    os.makedirs(piddir)
 try:
     os.chmod(logdir,0o1777)
 except:
@@ -380,7 +381,7 @@ def main():
         daemonfilter = None
         opts.regex = False
     daemons = dict()
-    globalpath = cfg.get("modulepath","/usr/local/scripts/daemonctl/modules/")
+    globalpath = cfg.get("modulepath",myvenv+"/usr/local/scripts/daemonctl/modules/")
     modules = {}
 
     dpip = dict(
@@ -397,7 +398,7 @@ def main():
         for modname in cfg.modules.list():
             mod = cfg.modules[modname]
             modules[modname] = mod
-    if not "msgctl" in modules and distutils.spawn.find_executable("msgctl"):
+    if not myvenv and not "msgctl" in modules and distutils.spawn.find_executable("msgctl"):
         msgctl = dict(
             name = "%(id)s",
             type = "dynamic",
@@ -474,7 +475,7 @@ def main():
     #daemons["deletedaemon"] = ("%s/deleteOld.py"%(bindir),"%s/deleteOld.log"%(logdir),"%s/deleteOld.pid"%(rundir))
     #print("List loaded")
 
-    hide = Hidden(cfg.get("hidepath","/var/run/daemonctl/hide.list"))
+    hide = Hidden(cfg.get("hidepath",myvenv+"/var/run/daemonctl/hide.list"))
 
     if len(args)>=1 and args[0] == "status":
         print("Daemon name                     Status, PID Number,             Start time         ,        Modification time of logfile")
@@ -493,8 +494,8 @@ def main():
         name = args[1]
         base = name.split("-",1)[0]
         print("Enabling %s as %s"%(base,name))
-        srcpath = "/usr/local/scripts/%s"%(base,)
-        destpath = "/usr/local/scripts/msgctl/modules/%s"%(name,)
+        srcpath = myvenv+"/usr/local/scripts/%s"%(base,)
+        destpath = myvenv+"/usr/local/scripts/msgctl/modules/%s"%(name,)
         if not os.path.exists(srcpath):
             print("No such application")
             exit(1)
@@ -507,7 +508,7 @@ def main():
     elif len(args)>=2 and args[0] == "disable":
         name = args[1]
         print("Disabling %s"%(name,))
-        destpath = "/usr/local/scripts/msgctl/modules/%s"%(name,)
+        destpath = myvenv+"/usr/local/scripts/msgctl/modules/%s"%(name,)
         if not os.path.exists(destpath):
             print("Application not enabled")
             exit(1)
