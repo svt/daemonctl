@@ -33,6 +33,13 @@ from socket import gethostname
 from .daemonlog import Logger,LogLevel
 from .daemonconfig import Config
 
+# SVT specific
+try:
+    from pysvt.herrchef import HerrChef
+except Exception as e:
+    # Probably not an error
+    HerrChef = None
+    pass
 
 class autoflush:
     def __init__(self, fp):
@@ -115,7 +122,7 @@ class FileChanged:
         except Exception:
             return False
 
-def init(modulename=None, autoreload=False, usecfg=True,cfgtypes=False,logformat=None,loglevel=None,basiclogger=True):
+def init(modulename=None, autoreload=False, usecfg=True,cfgtypes=False,logformat=None,loglevel=None,basiclogger=True,version=None):
     """Initializes logging and other subsystems"""
     global modname,msgsrv,stopconditions,opts,args,storage,log,cfg,configfile
     try:
@@ -164,6 +171,8 @@ def init(modulename=None, autoreload=False, usecfg=True,cfgtypes=False,logformat
                     log.exc()
             else:
                 log.debug("Could not find config file %r"%(configfile,))
+        if HerrChef is not None and version is not None:
+            HerrChef(modulename.split("-")[0],version).start()
     except Exception:
         log.exc()
     
