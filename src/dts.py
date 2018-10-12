@@ -77,6 +77,7 @@ global msgsrv
 modname = None # Registered name of module
 msgsrv = None  # Connection to the msgsrv
 msgcb = None   # Global message callback
+hc = None      # HerrChef instance
 timeout = 1.0  # Timeout for select in mainloop
 cfg = {}
 configfile = ""
@@ -124,7 +125,7 @@ class FileChanged:
 
 def init(modulename=None, autoreload=False, usecfg=True,cfgtypes=False,logformat=None,loglevel=None,basiclogger=True,version=None):
     """Initializes logging and other subsystems"""
-    global modname,msgsrv,stopconditions,opts,args,storage,log,cfg,configfile
+    global modname,msgsrv,stopconditions,opts,args,storage,log,cfg,configfile,hc
     try:
         opts,args = oparse.parse_args()
         if modulename is None:
@@ -172,7 +173,8 @@ def init(modulename=None, autoreload=False, usecfg=True,cfgtypes=False,logformat
             else:
                 log.debug("Could not find config file %r"%(configfile,))
         if HerrChef is not None and version is not None:
-            HerrChef(modulename.split("-")[0],version).start()
+            hc = HerrChef(modulename.split("-")[0],version)
+            hc.start()
     except Exception:
         log.exc()
     
