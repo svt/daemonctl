@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim: ts=4 sw=4 et bg=dark
 
-__version__ = '1.3.8a12'
+__version__ = '1.3.11a1'
 
 appname = "daemonctl"
 appdesc = "Utility and framework for simplifying application deployment and operation"

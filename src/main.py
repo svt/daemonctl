@@ -27,8 +27,8 @@ from __future__ import print_function
 import sys,os
 #sys.path.append(os.environ["HAWRYSRUNDOWN_INC_DIR"])
 from pwd import getpwnam
-from locks import FileLock
-from daemon import daemonize
+from .locks import FileLock
+from .daemon import daemonize
 from time import sleep,asctime,ctime
 from traceback import format_exc,print_exc
 from glob import glob
@@ -105,18 +105,18 @@ class Hidden:
     def load(self):
         self.lst = set(open(self.config).read().decode("utf-8").split("\n"))
     def add(self, name):
-        if isinstance(name,str): name = name.decode("utf-8")
+        if sys.version_info[0] < 3 and isinstance(name,str): name = name.decode("utf-8")
         name = name.strip()
         self.lst.add(name)
         self.save()
     def remove(self, name):
         name = name.strip()
-        if isinstance(name,str): name = name.decode("utf-8")
+        if sys.version_info[0] < 3 and isinstance(name,str): name = name.decode("utf-8")
         self.lst.remove(name)
         self.save()
     def ishidden(self, name):
         name = name.strip()
-        if isinstance(name,str): name = name.decode("utf-8")
+        if sys.version_info[0] < 3 and isinstance(name,str): name = name.decode("utf-8")
         #pprint(name)
         #pprint(self.lst)
         return name in self.lst

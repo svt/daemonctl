@@ -31,6 +31,7 @@ import sys
 import json
 from subprocess import Popen
 from pprint import pprint
+from . import daemonconfig
 import imp
 
 def getentrylist():
@@ -66,16 +67,11 @@ def createlinks(basepath="/usr/local/scripts"):
 
 def run(entryname):
     modules = getentrylist()
-    #print "MODS:",modules
     entry = modules.get(entryname)
-    #print "Entry:",entry
-    #sys.argv = [entry.name,"--id",entry.name]
     func = entry.load()
-    #print "Func:",func
     modname = entry.module_name.split(".",1)[0]
     try:
         path = getpath(modname)
-        #print "Path:",path
         os.chdir(path)
     except Exception as e:
         print("WARNING:Could not find/set module path %r"%(e,))
@@ -84,8 +80,6 @@ def run(entryname):
 
 def list_entry():
     for name,mod in getentrylist().items():
-        #print dir(mod)
-        #print mod.module_name
         modname = mod.module_name.split(".",1)[0]
         path = getpath(modname)
         cfgfile = os.path.join(path,"daemonctl.conf")
@@ -96,7 +90,7 @@ def list_entry():
                     line.strip() != ""])
         else:
             cfg = {}
-        print mod.name,json.dumps(cfg)
+        print(mod.name,json.dumps(cfg))
 
 def run_entry(name):
     run(name)
@@ -107,7 +101,7 @@ def autostart():
     to = "/etc/init.d/daemonctl"
     data = open(frm,"rb").read()
     open(to,"wb").write(data)
-    os.chmod(to,0755)
+    os.chmod(to,0o755)
     proc = Popen(["systemctl","enable","daemonctl"])
     proc.communicate()
 
@@ -116,15 +110,18 @@ def createinit():
         from sipy import ostool
         tool = ostool.OSTool()
     except:
-        print "Error: Could not import sipy"
+        print("Error: Could not import sipy")
         return
     for name in getentrylist():
         #if not os.path.exists(os.path.join("/etc/init.d/",name)):
         if tool.createInit(name) == True:
-            print "Created init-script for "+name
+            print("Created init-script for "+name)
 
 def main():
-    # Tests
+    try:
+        cfg = daemonconfig.Config("/usr/local/etc/daemonctl.conf")
+    except Exception as e:
+        cfg = dict()
     import optparse
     op = optparse.OptionParser()
     op.add_option("--autostart",help="Create and activate daemonctl init-script",action="store_true")
@@ -152,9 +149,10 @@ def main():
         sys.argv = [o.run,"--id",runid,"--stopfile",o.stopfile]
         run_entry(o.run)
     elif o.install:
-        args = ["pip","install",o.install,"-i","http://pypi.svt.se/simple","--upgrade",]
+        piphost = cfg.get("piphost","pypi")
+        args = ["pip","install",o.install,"-i","http://%(piphost)s/simple"%locals(),"--upgrade",]
         if not o.oldpip:
-            args += ["--trusted-host","pypi.svt.se"]
+            args += ["--trusted-host",piphost]
         if o.force:
             args.append("--force")
         if o.pre:
