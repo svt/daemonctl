@@ -70,7 +70,7 @@ class DaemonCTL:
                 try:
                     left.remove(obj.get("name"))
                 except Exception as e:
-                    print e
+                    print(e)
             running = bool(int(obj.get("running",0)))
             if running:
                 obj["running"] = running
@@ -91,14 +91,10 @@ class DaemonCTL:
 
 if __name__ == '__main__':
     def printStatus():
-        for l in d.status(["haserver","apa"],showall=showall): print l
+        for l in d.status(["haserver","apa"],showall=showall): print(l)
     d = DaemonCTL()
     showall = False
     #printStatus()
-    print d.start("apa")
-    #print d.stop("haserver")
-    #printStatus()
-    #print d.start("haserver")
-    #printStatus()
+    print(d.start("apa"))
         
 
