@@ -91,3 +91,6 @@ except for [fastentrypoints.py](https://github.com/ninjaaron/fast-entry_points) 
 
 ---
 
+## Primary Maintainer
+
+Andreas Åkerlund https://github.com/thezulk
