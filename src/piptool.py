@@ -90,7 +90,7 @@ def list_entry():
                     line.strip() != ""])
         else:
             cfg = {}
-        print(mod.name,json.dumps(cfg))
+        print("%s %s"%(mod.name,json.dumps(cfg)))
 
 def run_entry(name):
     run(name)
@@ -135,6 +135,7 @@ def main():
     op.add_option("--force",help="reinstall with pip from local repo",action="store_true")
     op.add_option("--pre","-p",help="send --pre to pip",action="store_true")
     op.add_option("--oldpip",help="Old pip doesn't use --trused-host",action="store_true")
+    op.add_option("--pip",help="Use anternate pip",default="pip")
     o,a = op.parse_args()
     if o.list:
         list_entry()
@@ -150,7 +151,7 @@ def main():
         run_entry(o.run)
     elif o.install:
         piphost = cfg.get("piphost","pypi")
-        args = ["pip","install",o.install,"-i","http://%(piphost)s/simple"%locals(),"--upgrade",]
+        args = [o.pip,"install",o.install,"-i","http://%(piphost)s/simple"%locals(),"--upgrade",]
         if not o.oldpip:
             args += ["--trusted-host",piphost]
         if o.force:
