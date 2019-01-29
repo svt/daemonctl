@@ -117,7 +117,6 @@ class Config:
 		return self._config[key]
 
 	def __getattr__(self, key):
-		print("ATTR %r"%(key,))
 		return self[key]
 	def __str__(self):
 		return self.__repr__()
