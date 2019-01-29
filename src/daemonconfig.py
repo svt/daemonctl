@@ -37,6 +37,12 @@ class Config:
 		# Load config
 		self._load()
 
+	def keys(self):
+		return self.list()
+	def __iter__(self):
+		for key in self._config:
+			print(repr(key))
+			yield key
 	def _load(self, filename=None):
 		if not filename:
 			filename = self._filename
@@ -111,6 +117,7 @@ class Config:
 		return self._config[key]
 
 	def __getattr__(self, key):
+		print("ATTR %r"%(key,))
 		return self[key]
 	def __str__(self):
 		return self.__repr__()
@@ -135,11 +142,13 @@ class Config:
 		return self._config.items()
 
 if __name__ == "__main__":
-	c = Config("/usr/local/etc/bandmigrering.conf")
-	print(c.apa.mandel.get("1").grejs)
-	print(c.get("programname"))
-	print(c["programname"])
-	print(c.apa.mandel["1"].grejs)
-	print(c.list("ingest"))
-
-
+	c = Config("daemonctl.test.conf")
+	#print(c.apa.mandel.get("1").grejs)
+	#print(c.get("programname"))
+	#print(c["programname"])
+	#print(c.apa.mandel["1"].grejs)
+	#print(c.list("modules"))
+	#print(c.logpath)
+	d = dict(hej=1)
+	d.update(c)
+	print(d)
