@@ -35,6 +35,8 @@ class DaemonCTL:
         o,e = proc.communicate()
         if e:
             raise DaemonCLTError(e)
+        if not isinstance(o,str):
+            o = o.decode("UTF-8")
         return o
     def hide(self, name):
         return self._call("hide",name)
