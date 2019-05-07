@@ -196,15 +196,18 @@ def shouldStop():
             return True
     return False
 
+def poll(timeout):
+    inl = sum([x.getSockets() for x in sockModules],[])
+    ins,outs,errs = select(inl,[],[],timeout)
+    for m in sockModules:
+        m.handleSockets(ins)
+
 def serve_forever():
     """Starts mainloop. Handles modules"""
     global timeout
     try:
         while not shouldStop():
-            inl = sum([x.getSockets() for x in sockModules],[])
-            ins,outs,errs = select(inl,[],[],timeout)
-            for m in sockModules:
-                m.handleSockets(ins)
+            poll(timeout)
     except KeyboardInterrupt:
         log.info("Exiting. CTRL-C pressed")
 

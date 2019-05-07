@@ -24,12 +24,18 @@
 
 """
 
-
-
 from sys import exc_info
 from threading import current_thread
 from traceback import format_exc, format_exception, format_stack
 from .fulltb import full_exc_info
+
+if not __builtins__.get("unicode"):
+    #__builtins__.unicode = str
+    unicode = str
+    py2 = False
+    print("Emulate py2")
+else:
+    py2 = True
 
 class LogLevel:
     NONE = "NONE"
@@ -77,7 +83,11 @@ class Logger:
             return
         name = self.name
         thread = current_thread().name
-        logtext = unicode(logtext).encode(self.encoding)
+        if not isinstance(logtext,unicode):
+            logtext = unicode(logtext,encoding=self.encoding)
+            #logtext = unicode(logtext).encode(self.encoding)
+        if py2:
+            logtext = logtext.encode(self.encoding)
         for message in logtext.split("\n"):
             print("%s;%s"%(level,self.format%locals()))
     def crit(self, msg):

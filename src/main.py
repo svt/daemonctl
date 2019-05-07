@@ -257,7 +257,7 @@ def main():
         print("Daemon name                     Status, PID Number,             Start time         ,        Modification time of logfile")
         print("----------------------------------------------------------------------------------------------------------------------------")
     elif len(args)>=1 and args[0] == "csvstatus":
-            print("name,running,pid,starttime,logchange")
+            print("name,running,pid,starttime,logchange,version")
     elif len(args)>=2 and args[0] == "hide":
         hide.add(args[1])
         print("Hiding %r"%args[1])
@@ -345,7 +345,14 @@ def main():
             except:
                 starttime = 0
                 logchanged = 0
-            print("%s,%s"%(daemon,"1,%s,%s,%s"%(r.pid,starttime,logchanged) if r.running() else "0,0,0,0"))
+            version = ""
+            changelog = os.path.join("/usr/local/scripts",r.id,"CHANGELOG")
+            if os.path.exists(changelog):
+                try:
+                    version = open(changelog).readline().strip()
+                except:
+                    pass
+            print("%s,%s"%(daemon,"1,%s,%s,%s,%s"%(r.pid,starttime,logchanged,version) if r.running() else "0,0,0,0,"))
         elif len(args)>=1 and args[0] == "list":
             print(daemon)
         elif len(args)>=1 and args[0] == "start":
