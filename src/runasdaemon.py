@@ -86,7 +86,11 @@ class RunAsDaemon:
                     while data:
                         data = fp.readline()
                         if data:
-                            self.log.write(data)
+							try:
+								self.log.write(data)
+							except Exception:
+								# No space left?
+								pass
                 except:
                     self.log.write("ERROR;Exception: %s"%format_exc())
                 self.log.write("INFO;Command ended\n")
