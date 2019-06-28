@@ -69,14 +69,23 @@ class LogWriter:
                 os.rename(self.filename,"%s.1"%self.filename)
                 return self.write(data)
             if self.jsonlog:
-                    dictdata = {
-                        "@timestamp":datetime.utcnow().isoformat()+"Z",
-                        "@version":1,
-                        "message":data,
-                        "level":level,
-                        }
-                    jsondata = json.dumps(dictdata).replace("\n","")+"\n"
+                dictdata = {
+                    "@timestamp":datetime.utcnow().isoformat()+"Z",
+                    "@version":1,
+                    "message":data,
+                    "level":level,
+                    }
+                jsondata = json.dumps(dictdata).replace("\n","")+"\n"
+                try:
                     return fp.write(jsondata)
+                except Exception:
+                    # Unable to write log (no space left on device?)
+                    pass
             else:
+                try:
                     return fp.write("%s;%s;%s\n"%(asctime(),level,data))
+                except Exception:
+                    # Unable to write log (no space left on device?)
+                    pass
 
+# vim: ts=4 sw=4 et
