@@ -9,6 +9,7 @@ from .daemon import daemonize
 from pwd import getpwnam
 
 try:
+	# Use the setproctitle module if it's installed
     from setproctitle import setproctitle
 except Exception:
     try:
@@ -20,8 +21,9 @@ except Exception:
             buff.value = newname
             libc.prctl(15, byref(buff), 0, 0, 0)
             try:
-                args = open("/proc/self/cmdline").read()
+				# Need linux kernel 3.5 or above for this to work
                 argaddr = int(open("/proc/self/stat").read().split()[47])
+                args = open("/proc/self/cmdline").read()
                 argc = args.count("\x00")
                 totallen = len(args)
                 clipedname = newname[:totallen-1]
