@@ -10,8 +10,35 @@ from pwd import getpwnam
 
 try:
     from setproctitle import setproctitle
-except:
-    setproctitle = lambda x: None
+except Exception:
+    try:
+        from ctypes import cdll, byref, create_string_buffer, string_at, memmove, memset
+        def setproctitle(newname):
+            libc = cdll.LoadLibrary('libc.so.6')
+            buff = create_string_buffer(len(newname)+1)
+            buff.value = newname
+            libc.prctl(15, byref(buff), 0, 0, 0)
+            try:
+                argaddr = int(open("/proc/self/stat").read().split()[47])
+                oldaddr = argaddr
+                totallen = 0
+                argc = len(sys.argv)
+                for c in range(argc+1):
+                    print c
+                    cargv = string_at(oldaddr)
+                    oldaddr += len(cargv) + 1
+                    totallen += len(cargv)+1
+                    print cargv
+                print totallen
+                clipedname = newname[:totallen-1]
+                print repr(clipedname)
+                memset(argaddr, 0, totallen)
+                memmove(argaddr, clipedname, len(clipedname))
+            except Exception:
+                # Old kernel, no argv addr
+                pass
+    except Exception:
+        setproctitle = lambda x: None
 
 
 class RunAsDaemon:
@@ -86,11 +113,11 @@ class RunAsDaemon:
                     while data:
                         data = fp.readline()
                         if data:
-							try:
-								self.log.write(data)
-							except Exception:
-								# No space left?
-								pass
+                            try:
+                                self.log.write(data)
+                            except Exception:
+                                # No space left?
+                                pass
                 except:
                     self.log.write("ERROR;Exception: %s"%format_exc())
                 self.log.write("INFO;Command ended\n")
