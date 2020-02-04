@@ -109,7 +109,8 @@ class LogWriter:
                     pass
             else:
                 try:
-                    return fp.write("%s;%s;%s\n"%(asctime(),level,data))
+                    timestamp = datetime.now().isoformat(" ")
+                    return fp.write("%s;%s;%s\n"%(timestamp, level, data))
                 except Exception:
                     # Unable to write log (no space left on device?)
                     pass

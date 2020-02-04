@@ -56,7 +56,7 @@ setup(
         "Programming Language :: Python :: 2.6",
     ],
     data_files = [
-        ("/etc/bash_completion.d/",["src/daemonctl.complete"]),
+        #("/etc/bash_completion.d/",["src/daemonctl.complete"]),
     ],
     entry_points = {
         "console_scripts":scripts,

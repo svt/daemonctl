@@ -118,6 +118,20 @@ class Hidden:
 
 log = LogWriter("%s/daemonctl.log"%logdir,numFiles=2,jsonlog=cfg.get("jsonlog",False))
 
+
+def init():
+    # Run once to ensure systemfiles are installed
+    destfile = "daemonctl.complete"
+    destpath = "/etc/bash_completion.d/"
+    fulldest = os.path.join(destpath,destfile)
+    if not path.exists(fulldest) and os.path.isdir(destpath):
+        mypath = os.path.realpath(__file__)
+        modpath = os.path.dirname(mypath)
+        compfile = os.path.join(modpath,destfile)
+        with open(compfile,"rb") as src:
+            open(fulldest,"wb").write(src.read())
+
+
 def main():
     usage = """Usage: daemonctl <command> [daemon]
      Commands:
@@ -134,6 +148,10 @@ def main():
         less         Less a daemon log
         csvstatus    Get daemon status in csv format
     """
+    try:
+        init()
+    except Exception as e:
+        print(e)
     if len(args) < 1:
         print(usage)
         sys.exit(1)
