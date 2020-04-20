@@ -124,7 +124,7 @@ def init():
     destfile = "daemonctl.complete"
     destpath = "/etc/bash_completion.d/"
     fulldest = os.path.join(destpath,destfile)
-    if not path.exists(fulldest) and os.path.isdir(destpath):
+    if not os.path.exists(fulldest) and os.path.isdir(destpath):
         mypath = os.path.realpath(__file__)
         modpath = os.path.dirname(mypath)
         compfile = os.path.join(modpath,destfile)
