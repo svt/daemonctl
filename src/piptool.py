@@ -151,9 +151,10 @@ def main():
         run_entry(o.run)
     elif o.install:
         piphost = cfg.get("piphost","pypi")
-        args = [o.pip,"install",o.install,"-i","http://%(piphost)s/simple"%locals(),"--upgrade",]
+        args = [o.pip,"install",o.install,"-i","http://%(piphost)s/simple"%locals(),"--upgrade","--disable-pip-version-check",]
         if not o.oldpip:
             args += ["--trusted-host",piphost]
+            args.append("--disable-pip-version-check")
         if o.force:
             args.append("--force")
         if o.pre:
