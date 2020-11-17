@@ -30,8 +30,9 @@ from optparse import OptionParser
 from os import path
 from traceback import print_exc
 from socket import gethostname
+from threading import Thread
 from .daemonlog import Logger,LogLevel
-from .daemonconfig import Config
+from .daemonconfig import Config, EnvironConfig
 
 # SVT specific
 try:
@@ -158,7 +159,13 @@ def init(modulename=None, autoreload=False, usecfg=True,cfgtypes=False,logformat
         log.setLevel(loglevel)
         if autoreload:
             stopconditions.append(FileChanged(sys.argv[0]))
-        if usecfg:
+        if usecfg in ["env","environ"]:
+            try:
+                cfg = EnvironConfig()
+            except Exception:
+                log.warn("Could not load config from environment")
+                log.exc()
+        elif usecfg:
             if usecfg is True:
                 cfgname = modulename
             else:
@@ -211,4 +218,12 @@ def serve_forever():
     except KeyboardInterrupt:
         log.info("Exiting. CTRL-C pressed")
 
+def start_thread(daemonize=True):
+    global main_thread
+    def serve_and_exit():
+        serve_forever()
+        os._exit(0)
+    main_thread = Thread(target=serve_forever)
+    main_thread.daemon = daemonize
+    main_thread.start()
 

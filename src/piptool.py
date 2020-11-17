@@ -135,7 +135,8 @@ def main():
     op.add_option("--force",help="reinstall with pip from local repo",action="store_true")
     op.add_option("--pre","-p",help="send --pre to pip",action="store_true")
     op.add_option("--oldpip",help="Old pip doesn't use --trused-host",action="store_true")
-    op.add_option("--pip",help="Use anternate pip",default="pip")
+    op.add_option("--pip",help="Use alternate pip",default="pip")
+    op.add_option("--user","-u",help="Install as user",action="store_true")
     o,a = op.parse_args()
     if o.list:
         list_entry()
@@ -159,6 +160,8 @@ def main():
             args.append("--force")
         if o.pre:
             args.append("--pre")
+        if o.user:
+            args.append("--user")
         proc = Popen(args)
         proc.communicate()
     else:

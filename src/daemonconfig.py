@@ -19,7 +19,7 @@
 
 """
 
-
+import os
 
 class ConfigFileError(Exception): pass
 
@@ -139,6 +139,17 @@ class Config:
 		return sorted(keys)
 	def items(self):
 		return self._config.items()
+
+class EnvironConfig(Config):
+	def _load(self):
+		found = False
+		for key, value in os.environ.items():
+			if key.lower().startswith("cfg_"):
+				key = key[4:].replace("_",".")
+				self._config[key] = value
+				found = True
+		if found is False:
+			raise ValueError("No config found in Environment")
 
 if __name__ == "__main__":
 	c = Config("daemonctl.test.conf")
