@@ -9,7 +9,7 @@ from .daemon import daemonize
 from pwd import getpwnam
 
 try:
-	# Use the setproctitle module if it's installed
+    # Use the setproctitle module if it's installed
     from setproctitle import setproctitle
 except Exception:
     try:
@@ -18,10 +18,12 @@ except Exception:
             newname = newname.replace(" ","") # Remove spaces as they may induce crashing
             libc = cdll.LoadLibrary('libc.so.6')
             buff = create_string_buffer(len(newname)+1)
+            if not hasattr(__builtins__,"unicode"):
+                newname = newname.encode("utf-8")
             buff.value = newname
             libc.prctl(15, byref(buff), 0, 0, 0)
             try:
-				# Need linux kernel 3.5 or above for this to work
+                # Need linux kernel 3.5 or above for this to work
                 argaddr = int(open("/proc/self/stat").read().split()[47])
                 args = open("/proc/self/cmdline").read()
                 argc = args.count("\x00")
