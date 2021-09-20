@@ -33,7 +33,7 @@ if not __builtins__.get("unicode"):
     #__builtins__.unicode = str
     unicode = str
     py2 = False
-    print("Emulate py2")
+    #print("Emulate py2")
 else:
     py2 = True
 
