@@ -11,7 +11,7 @@ from datetime import datetime
 
 
 class LogWriter:
-    def __init__(self, filename, maxSize = 100000000, numFiles=4, jsonlog=False, gzip=True):
+    def __init__(self, filename, maxSize = 100000000, numFiles=4, jsonlog=False, gzip=True, herrchef=None):
         self.filename = filename
         self.maxSize = maxSize
         self.numFiles = numFiles

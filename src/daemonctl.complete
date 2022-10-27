@@ -22,6 +22,14 @@ _daemonctl()
             COMPREPLY=($( compgen -W "$DAEMONS" -- "$cur"))
             return 0
             ;;
+        enable)
+            CONFIGS="$(ls /usr/local/etc/*.conf|xargs -i basename {} .conf)"
+            APPS="$((ls /usr/local/scripts/*/CHANGELOG|xargs -l dirname|xargs -l basename) 2> /dev/null)"
+            DAEMONS="$CONFIGS $APPS"
+
+            COMPREPLY=($( compgen -W "$DAEMONS" -- "$cur"))
+            return 0
+            ;;
         -c)
             compopt -o filenames
             COMPREPLY=( $( compgen -f -- "$cur" ) )

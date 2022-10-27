@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# vim: ts=4 sw=4 et
+
 import sys
 import os
 from traceback import format_exc, print_exc
@@ -6,6 +9,7 @@ from glob import glob
 from subprocess import Popen,PIPE,STDOUT
 from .logwriter import LogWriter
 from .daemon import daemonize
+from .parsetrace import Parser as TraceParser
 from pwd import getpwnam
 
 try:
@@ -49,6 +53,7 @@ class RunAsDaemon:
         self.loop = loop
         self.interval = interval
         self.allwayskill = allwayskill
+        self.traceparser = None
         self.runas = runas
         self.venv = venv
         self.jsonlog = jsonlog
@@ -60,6 +65,12 @@ class RunAsDaemon:
         except:
             self.log.write(format_exc())
     
+    def setTraceCallback(self, callback):
+        self.traceparser = TraceParser(callback)
+
+    def parseLine(self, line):
+        self.traceparser.parse(line)
+
     def running(self):
         if self.pid:
             if os.path.exists("/proc/%s/cmdline"%self.pid):
@@ -112,6 +123,7 @@ class RunAsDaemon:
                         if data:
                             try:
                                 self.log.write(data)
+                                self.parseLine(data)
                             except Exception:
                                 # No space left?
                                 pass

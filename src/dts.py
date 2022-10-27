@@ -40,7 +40,6 @@ try:
 except Exception as e:
     # Probably not an error
     HerrChef = None
-    pass
 
 class autoflush:
     def __init__(self, fp):
@@ -124,10 +123,16 @@ class FileChanged:
         except Exception:
             return False
 
-def init(modulename=None, autoreload=False, usecfg=True,cfgtypes=False,logformat=None,loglevel=None,basiclogger=True,version=None):
+def init(modulename=None, autoreload=False, usecfg=True, cfgtypes=False, logformat=None, loglevel=None, basiclogger=True, version=None, disablegc=False):
     """Initializes logging and other subsystems"""
     global modname,msgsrv,stopconditions,opts,args,storage,log,cfg,configfile,hc
     try:
+        if disablegc is True:
+            # Speed up python by disabling Garbage Collection
+            # https://instagram-engineering.com/dismissing-python-garbage-collection-at-instagram-4dca40b29172
+            import gc
+            gc.set_threshold(0)
+            atexit.register(os._exit, 0)
         opts,args = oparse.parse_args()
         if modulename is None:
             modulename = opts.id
@@ -179,6 +184,9 @@ def init(modulename=None, autoreload=False, usecfg=True,cfgtypes=False,logformat
                     log.exc()
             else:
                 log.debug("Could not find config file %r"%(configfile,))
+        if version is None and False: # Disable automatic version fetching
+            if os.path.exists("CHANGELOG"):
+                version = open("CHANGELOG").readline().strip()
         if HerrChef is not None and version is not None:
             hc = HerrChef(modulename.split("-")[0],version)
             hc.start()

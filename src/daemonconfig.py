@@ -41,7 +41,6 @@ class Config:
 		return self.list()
 	def __iter__(self):
 		for key in self._config:
-			print(repr(key))
 			yield key
 	def _load(self, filename=None):
 		if not filename:
