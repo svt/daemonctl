@@ -25,7 +25,6 @@
 
 # Module for loading modules through pip entry points (daemonctl.modules entry group)
 
-import subprocess
 from pkg_resources import iter_entry_points
 import os
 import sys
