@@ -97,11 +97,7 @@ def list_entry():
 def run_entry(name):
     run(name)
 
-def autostart():
-    if not find_executable("systemctl"):
-        print("Error: systemctl is not available")
-        return
-
+def removeinitd():
     old_initd = "/etc/init.d/daemonctl"
 
     if (os.path.exists(old_initd)):
@@ -117,6 +113,12 @@ def autostart():
         print("Removing existing init.d script")
         os.remove(old_initd)
 
+def autostart():
+    if not find_executable("systemctl"):
+        print("Error: systemctl is not available")
+        return
+
+    removeinitd()
 
     path = os.path.dirname(__file__)
     frm = os.path.join(path,"daemonctl.service")
@@ -131,7 +133,6 @@ def autostart():
     data = open(frm,"rb").read()
     open(to,"wb").write(data)
     os.chmod(to,0o755)
-
     proc = Popen(["systemctl","enable","daemonctl"])
     proc.communicate()
 
