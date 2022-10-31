@@ -1,0 +1,14 @@
+[Unit]
+Description=daemonctl
+After=docker.service
+
+[Service]
+Type=simple
+ExecStart=daemonctl start all
+ExecReload=daemonctl restart all
+ExecStop=daemonctl stop all
+
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
