@@ -1,6 +1,6 @@
 include *.py
 include src/daemonctl.conf
-include src/daemonctl.init
+include src/daemonctl.service
 include src/daemonctl.complete
 include README.md
 
