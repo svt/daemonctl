@@ -29,8 +29,10 @@ from pkg_resources import iter_entry_points
 import os
 import sys
 import json
+import errno
 from subprocess import Popen
 from pprint import pprint
+from distutils.spawn import find_executable
 from . import daemonconfig
 import imp
 
@@ -95,10 +97,39 @@ def list_entry():
 def run_entry(name):
     run(name)
 
+def removeinitd():
+    old_initd = "/etc/init.d/daemonctl"
+
+    if (os.path.exists(old_initd)):
+        # Disable and remove existing init.d script
+        proc = Popen(["systemctl", "is-enabled", "--quiet", "daemonctl.service"])
+        proc.communicate()
+
+        if proc.returncode == 0:
+            print("Disabling existing init.d script")
+            proc = Popen(["systemctl","disable","daemonctl"])
+            proc.communicate()
+
+        print("Removing existing init.d script")
+        os.remove(old_initd)
+
 def autostart():
+    if not find_executable("systemctl"):
+        print("Error: systemctl is not available")
+        return
+
+    removeinitd()
+
     path = os.path.dirname(__file__)
-    frm = os.path.join(path,"daemonctl.init")
-    to = "/etc/init.d/daemonctl"
+    frm = os.path.join(path,"daemonctl.service")
+    to = "/usr/local/lib/systemd/system/daemonctl.service"
+
+    try:
+        os.makedirs(os.path.dirname(to))
+    except OSError as ex:
+         if ex.errno != errno.EEXIST:
+            raise
+
     data = open(frm,"rb").read()
     open(to,"wb").write(data)
     os.chmod(to,0o755)
