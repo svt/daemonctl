@@ -48,6 +48,7 @@ configpath = os.environ.get("DAEMONCTL_CONFIG",myvenv+"/usr/local/etc/daemonctl.
 
 op = OptionParser()
 op.add_option("-f","--force",action="store_true",default=False)
+op.add_option("-t","--sigterm",help="Send SIGTERM when stopping daemons",action="store_true",default=False)
 op.add_option("-r","--regex",help="Select daemons using regexp only",action="store_true",default=False)
 op.add_option("-g","--glob",help="Select daemons using globbing only",action="store_true",default=False)
 op.add_option("-e","--exact",help="Select daemons using exact match only",action="store_true",default=False)
@@ -76,6 +77,7 @@ except:
     cfg = Config(defaultconfig)
 #os.nice(10)
 
+globalpath = cfg.get("modulepath",myvenv+"/usr/local/scripts/daemonctl/modules/")
 logdir = myvenv+cfg.logpath
 piddir = myvenv+cfg.pidpath
 if not os.path.exists(logdir):
@@ -131,6 +133,115 @@ def init():
         with open(compfile,"rb") as src:
             open(fulldest,"wb").write(src.read())
 
+def loadDaemonList(modules):
+    daemons = dict()
+    for modname, mod in modules.items():
+        mt = mod.get("type", "single")
+        if mt == "single":
+            name = mod.get("name")
+            daemon = getDaemonConfig(mod,{})
+            daemons[name] = daemon
+        else:
+            path = mod.get("path")
+            if path:
+                listcmd = path+mod.get("listcmd")
+            else:
+                listcmd = mod.get("listcmd")
+            for line in os.popen(listcmd):
+                if not line.strip():
+                    continue
+                sp = line.split(None,1)
+                id = sp.pop(0).strip()
+                try:
+                    icfg = json.loads(sp[0])
+                except:
+                    icfg = {}
+                name = mod.get("name")%dict(id=id)
+                icfg["id"] = id
+                daemon = getDaemonConfig(icfg, mod)
+                daemons[name] = daemon
+    return daemons
+
+def getDaemonConfig(opts, defaults):
+    def get(key, default=None):
+        return opts.get(key, defaults.get(key, default))
+
+    def getbool(key, default=False):
+        if default:
+            return 1 if get(key,"1").lower()[0] not in ["0","f","n"] else 0
+        else:
+            return 1 if get(key,"0").lower()[0] in ["1","t","y"] else 0
+    id = get("id","")
+    name = get("name")%dict(id=id)
+    path = get("path")
+    if path:
+        cmd = path + get("execcmd")
+        runpath = path
+    else:
+        cmd = get("execcmd")
+        runpath = "/tmp"
+    logpath = get("logpath",logdir) + name + ".log"
+    pidpath = get("pidpath",piddir) + name + ".pid"
+    signum = 15 if getbool("sigterm") else 9
+    daemon = dict(
+            name = name,
+            id = id,
+            command = cmd,
+            runpath = runpath,
+            pidfile = pidpath,
+            logfile = logpath,
+            logsize = int(get("logsize",50000000)),
+            numlogs = get("logfiles",4),
+            loop = getbool("loop"),
+            interval = float(get("loopinterval",10)),
+            allwayskill = getbool("forcekill"),
+            runas = get("runas"),
+            venv = get("virtualenv"),
+            jsonlog = getbool("jsonlog"),
+            sendtrace = get("sendtrace"),
+            logrestarts = getbool("logrestarts",True),
+            signum = signum,
+            )
+    return daemon
+
+def getModules():
+    modules = {}
+    dpip = dict(
+        name = "%(id)s",
+        execcmd = "dpiptool --run %(id)s --stopfile %(stopfile)s",
+        type = "dynamic",
+        listcmd = "dpiptool --list",
+        loop = "1",
+        interval = "10",
+    )
+    modules["dpip"] = dpip
+
+    if "modules" in cfg:
+        for modname in cfg.modules.list():
+            mod = cfg.modules[modname]
+            modules[modname] = mod
+    if not myvenv and not "msgctl" in modules and distutils.spawn.find_executable("msgctl"):
+        msgctl = dict(
+            name = "%(id)s",
+            type = "dynamic",
+            loop = "True",
+            interval = "5",
+            listcmd = "msgctl --list",
+            execcmd = "msgctl --id %(id)s --stopfile %(stopfile)s",
+        )
+        modules["msgctl"] = msgctl
+    elif not "msgctl" in modules:
+        # Builtin msgctl replacement
+        dctlmods = dict(
+            name = "%(id)s",
+            type = "dynamic",
+            loop = "True",
+            interval = "5",
+            listcmd = "dctlmods --list",
+            execcmd = "dctlmods --id %(id)s --stopfile %(stopfile)s",
+        )
+        modules["dctlmods"] = dctlmods
+    return modules
 
 def main():
     usage = """Usage: daemonctl <command> [daemon]
@@ -174,100 +285,9 @@ def main():
     except Exception as e:
         daemonfilter = None
         opts.regex = False
-    daemons = dict()
-    globalpath = cfg.get("modulepath",myvenv+"/usr/local/scripts/daemonctl/modules/")
-    modules = {}
 
-    dpip = dict(
-        name = "%(id)s",
-        execcmd = "dpiptool --run %(id)s --stopfile %(stopfile)s",
-        type = "dynamic",
-        listcmd = "dpiptool --list",
-        loop = "1",
-        interval = "10",
-    )
-    modules["dpip"] = dpip
-
-    if "modules" in cfg:
-        for modname in cfg.modules.list():
-            mod = cfg.modules[modname]
-            modules[modname] = mod
-    if not myvenv and not "msgctl" in modules and distutils.spawn.find_executable("msgctl"):
-        msgctl = dict(
-            name = "%(id)s",
-            type = "dynamic",
-            loop = "True",
-            interval = "5",
-            listcmd = "msgctl --list",
-            execcmd = "msgctl --id %(id)s --stopfile %(stopfile)s",
-        )
-        modules["msgctl"] = msgctl
-    elif not "msgctl" in modules:
-        # Builtin msgctl replacement
-        dctlmods = dict(
-            name = "%(id)s",
-            type = "dynamic",
-            loop = "True",
-            interval = "5",
-            listcmd = "dctlmods --list",
-            execcmd = "dctlmods --id %(id)s --stopfile %(stopfile)s",
-        )
-        modules["dctlmods"] = dctlmods
-            
-
-    for modname,mod in modules.items():
-        mt = mod.get("type","single")
-        if mt == "single":
-            cmd = mod.get("path",globalpath) + mod.get("execcmd")
-            runpath = mod.get("path",None)
-            logpath = mod.get("logpath",logdir)+mod.get("name")+".log"
-            logsize = mod.get("logsize",50000000)
-            logfiles = mod.get("logfiles",4)
-            pidpath = mod.get("pidpath",piddir)+mod.get("name")+".pid"
-            loop = 0 if mod.get("loop","0").lower() in ["0","false","off","no"] else 1
-            interval = float(mod.get("loopinterval",10))
-            forcekill = 0 if mod.get("forcekill","0").lower() in ["0","false","off","no"] else 1
-            interval = float(mod.get("loopinterval",10))
-            runas = mod.get("runas",None)
-            venv = mod.get("virtualenv",None)
-            jsonlog = 0 if mod.get("jsonlog","0").lower() in ["0","false","off","no"] else 1
-            daemons[mod.get("name")] = (mod.get("name"), "", cmd, runpath, logpath, pidpath, loop, interval, forcekill, runas, venv, jsonlog, logsize, logfiles)
-        else:
-            path = mod.get("path")
-            if path:
-                listcmd = path + mod.get("listcmd")
-            else:
-                listcmd = mod.get("listcmd")
-            for line in os.popen(listcmd):
-                sp = line.split(None,1)
-                id = sp.pop(0).strip()
-                try:
-                    icfg = json.loads(sp[0])
-                except:
-                    icfg = {}
-                name = mod.get("name")%vars()
-                if path:
-                    cmd = path + mod.get("execcmd")
-                    runpath = path
-                else:
-                    cmd = mod.get("execcmd")
-                    runpath = "/tmp/"
-                logpath = mod.get("logpath",logdir)+name+".log"
-                pidpath = mod.get("pidpath",piddir)+name+".pid"
-                logsize = mod.get("logsize",50000000)
-                logfiles = mod.get("logfiles",4)
-                loop = 0 if icfg.get("loop",mod.get("loop","0")).lower() in ["0","false","off","no"] else 1
-                interval = float(icfg.get("loopinterval",mod.get("loopinterval",10)))
-                forcekill = 0 if icfg.get("forcekill",mod.get("forcekill","0")).lower() in ["0","false","off","no"] else 1
-                runas = icfg.get("runas",mod.get("runas",None))
-                venv = icfg.get("virtualenv",mod.get("runas",None))
-                jsonlog = 0 if icfg.get("jsonlog",mod.get("jsonlog","0")).lower() in ["0","false","off","no"] else 1
-                #daemons[name] = (name, id, cmd, runpath, logpath, pidpath, loop, interval, forcekill, runas, venv, jsonlog)
-                daemons[name] = (name, id, cmd, runpath, logpath, pidpath, loop, interval, forcekill, runas, venv, jsonlog, logsize, logfiles)
-    #(id, command, logfile=None, pidfile=None, loop = True, interval=2.0, allwayskill=False)
-
-    #daemons["deletedaemon"] = ("%s/deleteOld.py"%(bindir),"%s/deleteOld.log"%(logdir),"%s/deleteOld.pid"%(rundir))
-    #print("List loaded")
+    modules = getModules()
+    daemons = loadDaemonList(modules)
 
     hide = Hidden(cfg.get("hidepath",myvenv+"/var/run/daemonctl/hide.list"))
 
@@ -310,7 +330,7 @@ def main():
         print("%s disabled"%(name,))
         exit(0)
     found = False
-    for daemon,daemonargs in sorted(daemons.items()):
+    for daemon, daemonargs in sorted(daemons.items()):
         hidden = hide.ishidden(daemon)
         if hidden and not opts.showall:
             continue
@@ -319,12 +339,12 @@ def main():
           and not (opts.exact and daemon == filtertext)):
             continue
         found = True
-        r = RunAsDaemon(*daemonargs)
+        r = RunAsDaemon(**daemonargs)
         if len(args)>=1 and args[0] == "stop":
             if r.running():
                 print("Stopping %s"%daemon)
-                log.write("INFO;Stoping %s\n"%daemon)
-                r.stop(opts.force)
+                log.write("INFO;Stopping %s\n"%daemon)
+                r.stop(opts.force,opts.sigterm)
                 while r.running():
                     sleep(0.1)
             else:
@@ -384,7 +404,7 @@ def main():
             if r.running():
                 print("Restarting %s"%daemon)
                 log.write("INFO;Restarting %s (stop)\n"%daemon)
-                r.stop(opts.force)
+                r.stop(opts.force,opts.sigterm)
                 while r.running():
                     sleep(0.1)
                 log.write("INFO;Restarting %s (start)\n"%daemon)

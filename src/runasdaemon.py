@@ -4,13 +4,14 @@
 import sys
 import os
 from traceback import format_exc, print_exc
-from time import sleep
+from time import sleep, strftime, time
 from glob import glob
 from subprocess import Popen,PIPE,STDOUT
 from .logwriter import LogWriter
 from .daemon import daemonize
-from .parsetrace import Parser as TraceParser
+from .parsetrace import TraceParser
 from pwd import getpwnam
+from socket import SHUT_RDWR
 
 try:
     # Use the setproctitle module if it's installed
@@ -43,7 +44,7 @@ except Exception:
 
 
 class RunAsDaemon:
-    def __init__(self, name, id, command, runpath, logfile=None, pidfile=None, loop = True, interval=2.0, allwayskill=False, runas=None, venv=None,jsonlog=False,logsize=100000,numlogs=4):
+    def __init__(self, name, id, command, runpath, logfile=None, pidfile=None, loop = True, interval=2.0, allwayskill=False, runas=None, venv=None,jsonlog=False,logsize=100000,numlogs=4,sendtrace=None,signum=9, logrestarts=True):
         self.name = name
         self.id = id
         self.command = command
@@ -53,23 +54,53 @@ class RunAsDaemon:
         self.loop = loop
         self.interval = interval
         self.allwayskill = allwayskill
+        self.logrestarts = logrestarts
         self.traceparser = None
         self.runas = runas
         self.venv = venv
         self.jsonlog = jsonlog
+        self.signum = signum
+        #print("LOGFILE:"+repr(logfile))
+        #print("PIDFILE:"+repr(pidfile))
         self.log = LogWriter(logfile,maxSize=logsize,numFiles=numlogs,jsonlog=jsonlog)
         self.pid = None
+        if sendtrace is None:
+            pass
+        elif sendtrace == "herrchef":
+            #print("Sending traces to herrchef")
+            self.setTraceCallback(lambda data: self.larmToHerrChef(data[-1].strip(),2))
+        else:
+            print("Unknown sendtrace option %r"%(sendtrace,))
+        self.pid = self.readPID()
+    
+    def readPID(self):
         try:
             if os.path.exists(self.pidfile):
-                self.pid = int(open(self.pidfile).read())
+                return int(open(self.pidfile).read())
+            return None
         except:
             self.log.write(format_exc())
-    
+            return None
+    def larmToHerrChef(self, message, level):
+        from pysvt.herrchef import HerrChef
+        hc = HerrChef(self.name,"LARM")
+        curtime = strftime("%Y-%m-%d;%H:%M:%S")
+        reporthost = hc.reporthost
+        name = self.name
+        larm = "LARM;%(curtime)s;%(reporthost)s;%(name)s;%(level)s;%(message)s\r\n"%locals()
+        hc.send(larm)
+        hc.socket.shutdown(SHUT_RDWR)
+        hc.socket.close()
+
     def setTraceCallback(self, callback):
         self.traceparser = TraceParser(callback)
 
     def parseLine(self, line):
-        self.traceparser.parse(line)
+        try:
+            if self.traceparser is not None:
+                self.traceparser.parse(line)
+        except Exception as e:
+            print("Error in traceparser: %s"%(e,))
 
     def running(self):
         if self.pid:
@@ -89,6 +120,8 @@ class RunAsDaemon:
         if os.path.exists(stopfile):
             os.unlink(stopfile)
         if not daemonize():
+            while not self.readPID():
+                sleep(0.01)
             return
         sys.stdout = self.log
         sys.stderr = self.log
@@ -97,6 +130,7 @@ class RunAsDaemon:
         try:
             self.pid = os.getpid()
             open(self.pidfile,"w").write(str(self.pid))
+            self.log.write("INFO;Starting daemon")
             while self.loop or first:
                 first = False
                 try:
@@ -129,21 +163,34 @@ class RunAsDaemon:
                                 pass
                 except:
                     self.log.write("ERROR;Exception: %s"%format_exc())
-                self.log.write("INFO;Command ended\n")
-                if os.path.exists("%s.stop"%self.pidfile):
-                    self.loop = False
-                    os.unlink("%s.stop"%self.pidfile)
+                if self.logrestarts:
+                    self.log.write("INFO;Command ended\n")
+                if self.checkStopfile():
+                    self.endloop()
                 elif self.loop:
-                    sleep(self.interval)
-                    self.log.write("INFO;Restarting\n")
+                    if self.loopWait() and self.logrestarts:
+                        self.log.write("INFO;Restarting\n")
                 else:
                     self.log.write("CRITICAL;Daemon died\n")
-                    
         except:
             self.log.write(format_exc())
         if os.path.exists(self.pidfile):
             os.unlink(self.pidfile)
         sys.exit()
+    def checkStopfile(self):
+        return os.path.exists("%s.stop"%self.pidfile)
+    def endloop(self):
+        self.loop = False
+        os.unlink("%s.stop"%self.pidfile)
+        self.log.write("INFO;Stopping daemon")
+    def loopWait(self):
+        next = time() + self.interval
+        while next > time():
+            if self.checkStopfile():
+                self.endloop()
+                return False
+            sleep(0.1)
+        return True
 
     def findChildren(self, pid=None):
         if pid is None:
@@ -174,7 +221,7 @@ class RunAsDaemon:
         for pid in pids:
             print("Killing pid: %s"%(pid,))
             try:
-                os.kill(int(pid),9)
+                os.kill(int(pid),self.signum)
             except OSError as e:
                 if e.errno == 3:
                     pass
@@ -182,22 +229,25 @@ class RunAsDaemon:
                     print_exc()
         return len(pids)
 
-    def stop(self, force=False):
+    def stop(self, force=False, sigterm = False):
+        if sigterm:
+            self.signum = 15
+        if not force or sigterm:
+            open("%s.stop"%self.pidfile,"w").write(str(self.pid))
         if force or self.allwayskill:
             children = self.killProcessTree()
             print("Killed %s child processes"%children)
-            try:
-                os.kill(self.pid,9)
-            except OSError as e:
-                if e.errno == 3:
-                    pass
-                else:
+            if not sigterm:
+                try:
+                    os.kill(self.pid,self.signum)
+                except OSError as e:
+                    if e.errno == 3:
+                        pass
+                    else:
+                        print_exc()
+                except:
                     print_exc()
-            except:
-                print_exc()
-            if os.path.exists(self.pidfile):
-                os.unlink(self.pidfile)
-        else:
-            open("%s.stop"%self.pidfile,"w").write(str(self.pid))
+                if os.path.exists(self.pidfile):
+                    os.unlink(self.pidfile)
 
 

@@ -1,0 +1,30 @@
+2022-10-21 13:51:28.178573;DEBUG;Key 25 pressed 1
+2022-10-21 13:51:28.179049;DEBUG;Key 25 info {'onup': None, 'bg': (141, 240, 0), 'ondown': 'PULT SET ID=VIDEO-KAM2 VALUE=ON', 'dest': 'gui', 'text': 'KAM2', 'align': 'center', 'url': None, 'font': '18'}
+2022-10-21 13:51:28.348188;DEBUG;Key 25 pressed 0
+2022-10-21 13:51:28.348401;DEBUG;Key 25 info {'onup': None, 'bg': (141, 240, 0), 'ondown': 'PULT SET ID=VIDEO-KAM2 VALUE=ON', 'dest': 'gui', 'text': 'KAM2', 'align': 'center', 'url': None, 'font': '18'}
+2022-10-21 13:51:29.128707;DEBUG;Key 24 pressed 1
+2022-10-21 13:51:29.129021;DEBUG;Key 24 info {'onup': None, 'bg': (141, 240, 0), 'ondown': 'PULT SET ID=VIDEO-KAM1 VALUE=ON', 'dest': 'gui', 'text': 'KAM1', 'align': 'center', 'url': None, 'font': '18'}
+2022-10-21 13:51:29.280090;DEBUG;Key 24 pressed 0
+2022-10-21 13:51:29.280964;DEBUG;Key 24 info {'onup': None, 'bg': (141, 240, 0), 'ondown': 'PULT SET ID=VIDEO-KAM1 VALUE=ON', 'dest': 'gui', 'text': 'KAM1', 'align': 'center', 'url': None, 'font': '18'}
+2022-10-21 13:51:30.039483;DEBUG;Key 26 pressed 1
+2022-10-21 13:51:30.039980;DEBUG;Key 26 info {'onup': None, 'bg': (141, 240, 0), 'ondown': 'PULT SET ID=VIDEO-KAM3 VALUE=ON', 'dest': 'gui', 'text': 'KAM3', 'align': 'center', 'url': None, 'font': '18'}
+2022-10-21 13:51:30.168386;DEBUG;Key 26 pressed 0
+2022-10-21 13:51:30.168590;DEBUG;Key 26 info {'onup': None, 'bg': (141, 240, 0), 'ondown': 'PULT SET ID=VIDEO-KAM3 VALUE=ON', 'dest': 'gui', 'text': 'KAM3', 'align': 'center', 'url': None, 'font': '18'}
+2022-10-21 13:51:31.039155;DEBUG;Key 27 pressed 1
+2022-10-21 13:51:31.039580;DEBUG;Key 27 info {'onup': None, 'bg': (63, 70, 204), 'ondown': 'PULT SET ID=VIDEO-IN1 VALUE=ON', 'dest': 'gui', 'text': 'IN1', 'align': 'center', 'url': None, 'font': '18'}
+2022-10-21 13:51:31.208804;DEBUG;Key 27 pressed 0
+2022-10-21 13:51:31.209216;DEBUG;Key 27 info {'onup': None, 'bg': (63, 70, 204), 'ondown': 'PULT SET ID=VIDEO-IN1 VALUE=ON', 'dest': 'gui', 'text': 'IN1', 'align': 'center', 'url': None, 'font': '18'}
+2022-10-21 13:51:32.138197;DEBUG;Key 28 pressed 1
+2022-10-21 13:51:32.138581;DEBUG;Key 28 info {'onup': None, 'bg': (63, 70, 204), 'ondown': 'PULT SET ID=VIDEO-IN2 VALUE=ON', 'dest': 'gui', 'text': 'IN2', 'align': 'center', 'url': None, 'font': '18'}
+2022-10-21 13:51:32.309100;DEBUG;Key 28 pressed 0
+2022-10-21 13:51:32.309782;DEBUG;Key 28 info {'onup': None, 'bg': (63, 70, 204), 'ondown': 'PULT SET ID=VIDEO-IN2 VALUE=ON', 'dest': 'gui', 'text': 'IN2', 'align': 'center', 'url': None, 'font': '18'}
+2022-10-21 13:51:33.348690;DEBUG;Key 30 pressed 1
+2022-10-21 13:51:33.349031;DEBUG;Key 30 info {'onup': None, 'bg': (0, 163, 231), 'ondown': 'PULT SET ID=VIDEO-BUTTERFLY VALUE=ON', 'dest': 'gui', 'text': 'DVE', 'align': 'center', 'url': None, 'font': '18'}
+2022-10-21 13:51:33.479559;DEBUG;Key 30 pressed 0
+2022-10-21 13:51:33.480497;DEBUG;Key 30 info {'onup': None, 'bg': (0, 163, 231), 'ondown': 'PULT SET ID=VIDEO-BUTTERFLY VALUE=ON', 'dest': 'gui', 'text': 'DVE', 'align': 'center', 'url': None, 'font': '18'}
+2022-10-21 13:53:09.736063;DEBUG;Key 1 pressed 1
+2022-10-21 13:53:09.736595;DEBUG;Key 1 info {'onup': None, 'bg': None, 'ondown': 'LAYOUT lokalbord1 desk-a1 4WIRE', 'dest': 'gui', 'text': 'lokalbord1', 'align': 'center', 'url': None, 'font': '16'}
+2022-10-21 13:53:09.935686;DEBUG;Key 1 pressed 0
+2022-10-21 13:53:09.935985;DEBUG;Key 1 info {'onup': None, 'bg': None, 'ondown': 'LAYOUT lokalbord1 desk-a1 4WIRE', 'dest': 'gui', 'text': 'lokalbord1', 'align': 'center', 'url': None, 'font': '16'}
+2022-10-21 13:59:20.673514;DEBUG;Key 0 pressed 1
+

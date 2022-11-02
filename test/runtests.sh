@@ -1,2 +1,7 @@
-python2 testlog.py
-python3 testlog.py
+./clean.sh
+python2 testtraceparser.py
+python3 testtraceparser
+python2 testmain.py
+./clean.sh
+python3 testmain.py
+./clean.sh

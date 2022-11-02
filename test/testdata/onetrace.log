@@ -1,0 +1,32 @@
+2022-09-22 09:34:20.004622;DEBUG;SET from 'timeplay1' ('10.26.50.57'): {'playinfo1': 'Playing balk', 'id': 'TIMESHIFT:CR:AFC:J\xc3\x96NK\xc3\x96PING:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'balk'}
+2022-09-22 09:34:20.006439;DEBUG;SET from 'timeplay1' ('10.26.50.57'): {'playinfo1': 'Playing balk', 'id': 'TIMESHIFT:CR:AFC:S\xc3\x96DERT\xc3\x84LJE:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'balk'}
+2022-09-22 09:34:20.015934;DEBUG;SET from 'timeplay1' ('10.26.50.55'): {'playinfo1': 'Playing balk', 'id': 'TIMESHIFT:CR:AFC:HALLAND:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'balk'}
+2022-09-22 09:34:20.018284;DEBUG;SET from 'timeplay1' ('10.26.50.55'): {'playinfo1': 'Playing balk', 'id': 'TIMESHIFT:CR:AFC:V\xc3\x84ST:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'balk'}
+2022-09-22 09:34:20.034476;DEBUG;SET from 'timeplay1' ('10.26.50.55'): {'playinfo1': 'Playing balk', 'id': 'TIMESHIFT:CR:AFC:STOCKHOLM:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'balk'}
+2022-09-22 09:34:50.003297;DEBUG;SET from 'timeplay1' ('10.26.50.57'): {'playinfo1': "Cued 'IT-2020-0505-VASTMORON'", 'id': 'TIMESHIFT:CR:AFC:J\xc3\x96NK\xc3\x96PING:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'cued'}
+2022-09-22 09:34:50.004447;DEBUG;SET from 'timeplay1' ('10.26.50.57'): {'playinfo1': "Cued 'IT-2020-0505-VASTMORON'", 'id': 'TIMESHIFT:CR:AFC:S\xc3\x96DERT\xc3\x84LJE:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'cued'}
+2022-09-22 09:34:50.014507;DEBUG;SET from 'timeplay1' ('10.26.50.55'): {'playinfo1': "Cued 'IT-2020-0505-VASTMORON'", 'id': 'TIMESHIFT:CR:AFC:HALLAND:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'cued'}
+2022-09-22 09:34:50.016544;DEBUG;SET from 'timeplay1' ('10.26.50.55'): {'playinfo1': "Cued 'IT-2020-0505-VASTMORON'", 'id': 'TIMESHIFT:CR:AFC:V\xc3\x84ST:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'cued'}
+2022-09-22 09:34:50.018386;DEBUG;SET from 'timeplay1' ('10.26.50.55'): {'playinfo1': "Cued 'IT-2020-0505-VASTMORON'", 'id': 'TIMESHIFT:CR:AFC:STOCKHOLM:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'cued'}
+2022-09-22 09:35:00.002191;DEBUG;SET from 'timeplay1' ('10.26.50.57'): {'playinfo1': 'Play command sent to server', 'id': 'TIMESHIFT:CR:AFC:J\xc3\x96NK\xc3\x96PING:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'running'}
+2022-09-22 09:35:00.008936;DEBUG;SET from 'timeplay1' ('10.26.50.57'): {'playinfo1': 'Play command sent to server', 'id': 'TIMESHIFT:CR:AFC:S\xc3\x96DERT\xc3\x84LJE:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'running'}
+2022-09-22 09:35:00.010106;DEBUG;SET from 'timeplay1' ('10.26.50.55'): {'playinfo1': 'Play command sent to server', 'id': 'TIMESHIFT:CR:AFC:HALLAND:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'running'}
+2022-09-22 09:35:00.010655;DEBUG;SET from 'timeplay1' ('10.26.50.55'): {'playinfo1': 'Play command sent to server', 'id': 'TIMESHIFT:CR:AFC:V\xc3\x84ST:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'running'}
+2022-09-22 09:35:00.011240;DEBUG;SET from 'timeplay1' ('10.26.50.55'): {'playinfo1': 'Play command sent to server', 'id': 'TIMESHIFT:CR:AFC:STOCKHOLM:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'running'}
+2022-09-22 09:35:01.080686;DEBUG;Traceback (most recent call last):
+2022-09-22 09:35:01.082530;DEBUG;File "/usr/local/scripts/msgctl/modules/dbgw/dbgw.py", line 124, in run
+2022-09-22 09:35:01.084031;DEBUG;self.client._sender_oldsend(data)
+2022-09-22 09:35:01.084203;DEBUG;File "/usr/lib/python2.7/site-packages/pysvt/hmux.py", line 56, in send
+2022-09-22 09:35:01.084339;DEBUG;self.socket.sendall(sd)
+2022-09-22 09:35:01.084896;DEBUG;File "/usr/lib64/python2.7/socket.py", line 224, in meth
+2022-09-22 09:35:01.085023;DEBUG;return getattr(self._sock,name)(*args)
+2022-09-22 09:35:01.085454;DEBUG;timeout: timed out
+2022-09-22 09:35:01.254187;DEBUG;SET from 'UDP' ('10.26.1.250'): {'firstname': 'Jonas', 'mobile': '0737123029', 'ip': '10.41.15.99', 'nova': 'N90177', 'user': 'joan18', 'id': 'AD:SIP:70755'}
+2022-09-22 09:35:01.255466;DEBUG;Removing client 139712132089472 ('127.0.0.1', 35608)
+2022-09-22 09:37:26.925206;DEBUG;DEL from 'scheduler' ('10.26.50.55'): {'id': 'car9tk1:starttime'}
+2022-09-22 09:37:26.941977;DEBUG;SET from 'scheduler' ('10.26.50.55'): {'id': 'car9tk1:studio', 'value': ''}
+2022-09-22 09:38:00.002742;DEBUG;SET from 'timeplay1' ('10.26.50.57'): {'playinfo1': 'Stop command sent to server', 'id': 'TIMESHIFT:CR:AFC:J\xc3\x96NK\xc3\x96PING:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'done'}
+2022-09-22 09:38:00.007034;DEBUG;SET from 'timeplay1' ('10.26.50.57'): {'playinfo1': 'Stop command sent to server', 'id': 'TIMESHIFT:CR:AFC:S\xc3\x96DERT\xc3\x84LJE:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'done'}
+2022-09-22 09:38:00.012537;DEBUG;SET from 'timeplay1' ('10.26.50.55'): {'playinfo1': 'Stop command sent to server', 'id': 'TIMESHIFT:CR:AFC:HALLAND:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'done'}
+2022-09-22 09:38:00.014103;DEBUG;SET from 'timeplay1' ('10.26.50.55'): {'playinfo1': 'Stop command sent to server', 'id': 'TIMESHIFT:CR:AFC:V\xc3\x84ST:2022-09-22T09:35:00.000+02:00', 'playstatus1': 'done'}
+
