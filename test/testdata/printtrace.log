@@ -1,0 +1,32 @@
+2022-10-11 17:31:13.908656;DEBUG;pj;thr0x7fb49d950740;pjsua_call.c;!Hangup all calls..
+2022-10-11 17:31:13.908793;DEBUG;pj;thr0x7fb49d950740;pjsua_call.c;.Call 1 hanging up: code=0..
+2022-10-11 17:31:13.909712;DEBUG;events;EVENT SIP::HANGUPALL {}
+2022-10-11 17:31:13.910328;DEBUG;events;EVENT CALL::HANGUP {'uri': 'sip:number@server'}
+2022-10-11 17:31:13.913180;INFO;pagingstream;Could not connect to pager
+2022-10-11 17:31:13.914047;DEBUG;Traceback (most recent call last):
+2022-10-11 17:31:13.914327;DEBUG;File "hmux4wire.py", line 352, in <module>
+2022-10-11 17:31:13.914598;DEBUG;s4w.stop()
+2022-10-11 17:31:13.914653;DEBUG;File "hmux4wire.py", line 31, in stop
+2022-10-11 17:31:13.914689;DEBUG;self.sip.stop()
+2022-10-11 17:31:13.914731;DEBUG;File "/usr/local/scripts/sip4wire/sip.py", line 334, in stop
+2022-10-11 17:31:13.914757;DEBUG;self.close()
+2022-10-11 17:31:13.914801;DEBUG;File "/usr/local/scripts/sip4wire/sip.py", line 381, in close
+2022-10-11 17:31:13.914835;DEBUG;while list(self.callmanager.allActive()):
+2022-10-11 17:31:13.914880;DEBUG;File "/usr/local/scripts/sip4wire/callmanager.py", line 122, in allActive
+2022-10-11 17:31:13.914910;DEBUG;if call.getActive():
+2022-10-11 17:31:13.914952;DEBUG;File "/usr/local/scripts/sip4wire/ubuntu16/pjsua2.py", line 8924, in <lambda>
+2022-10-11 17:31:13.916420;DEBUG;__getattr__ = lambda self, name: _swig_getattr(self, Call, name)
+2022-10-11 17:31:13.916466;DEBUG;File "/usr/local/scripts/sip4wire/ubuntu16/pjsua2.py", line 74, in _swig_getattr
+2022-10-11 17:31:13.916495;DEBUG;return _swig_getattr_nondynamic(self, class_type, name, 0)
+2022-10-11 17:31:13.916529;DEBUG;File "/usr/local/scripts/sip4wire/ubuntu16/pjsua2.py", line 69, in _swig_getattr_nondynamic
+2022-10-11 17:31:13.916554;DEBUG;print_stack()
+2022-10-11 17:31:15.993140;DEBUG;17:31:15.985         os_core_unix.c !pjlib 2.8 for POSIX initialized
+2022-10-11 17:31:15.993287;DEBUG;17:31:15.991         sip_endpoint.c  .Creating endpoint instance...
+2022-10-11 17:31:15.993328;DEBUG;17:31:15.991                  pjlib  .select() I/O Queue created (0x565513eab600)
+2022-10-11 17:31:15.993372;DEBUG;17:31:15.991         sip_endpoint.c  .Module "mod-msg-print" registered
+2022-10-11 17:31:15.993405;DEBUG;17:31:15.991        sip_transport.c  .Transport manager created.
+2022-10-11 17:31:15.993437;DEBUG;17:31:15.991           pjsua_core.c  .PJSUA state changed: NULL --> CREATED
+2022-10-11 17:31:15.993477;DEBUG;pj;thr0x7fcd02641740;sip_endpoint.c;.Module "mod-pjsua-log" registered
+2022-10-11 17:31:15.993534;DEBUG;pj;thr0x7fcd02641740;sip_endpoint.c;.Module "mod-tsx-layer" registered
+2022-10-11 17:31:15.993572;DEBUG;pj;thr0x7fcd02641740;sip_endpoint.c;.Module "mod-stateful-util" registered
+

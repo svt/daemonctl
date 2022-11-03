@@ -1,13 +1,18 @@
 #!/usr/bin/env python
 # vim: ts=4 sw=4 et
 
-class Parser:
+class TraceParser:
     def __init__(self, callback):
         self.callback = callback
         self.buffer = None
         self.missed = 0
+    def stripLevel(self, line):
+        if ";" in line:
+            line = line.split(";",1)[1]
+        return line
     def parse(self, line):
         line = line.strip()
+        line = self.stripLevel(line)
         if self.buffer is None:
             if "Traceback (most recent call last):" in line:
                 self.buffer = [line]
