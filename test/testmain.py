@@ -87,7 +87,9 @@ def startstop(name, wait=0):
 	sleep(wait)
 	runmany(["main","stop"],names)
 
+test(sys.argv)
 #test(["main","status"])
 #startstop("d1")
 #startstop(["d2","d3","single1"],2)
-startstop("st",1)
+#startstop("st",1)
+

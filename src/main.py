@@ -257,6 +257,7 @@ def main():
         show         Unhide daemon from status
         tail         Tail a daemon log
         less         Less a daemon log
+        waitfor      Wait until a daemon is running (args: <wait for daemon> [calling daemon])
         csvstatus    Get daemon status in csv format
     """
     try:
@@ -328,6 +329,25 @@ def main():
             exit(1)
         os.unlink(destpath)
         print("%s disabled"%(name,))
+        exit(0)
+    elif len(args)>=2 and args[0] == "waitfor":
+        waitopts = daemons.get(args[1])
+        if waitopts is None:
+            print("Daemon %r not found"%(args[1],))
+            exit(1)
+        waitfor = RunAsDaemon(**waitopts)
+        checkstop = None
+        if len(args) >= 3:
+            checkstop = daemons.get(args[2])
+            if checkstop is None:
+                print("Daemon %r not found"%(args[2],))
+                exit(1)
+            checkstop = RunAsDaemon(**checkstop)
+        while not waitfor.running():
+            waitfor.pid = waitfor.readPID()
+            if checkstop is not None and checkstop.checkStopfile():
+                break
+            sleep(0.1)
         exit(0)
     found = False
     for daemon, daemonargs in sorted(daemons.items()):

@@ -81,17 +81,39 @@ class RunAsDaemon:
         except:
             self.log.write(format_exc())
             return None
+    def sendToHerrChef(self, command, message="", level=None):
+        try:
+            from pysvt.herrchef import HerrChef
+        except Exception:
+            return
+        try:
+            import logging
+            rl = logging.getLogger("")
+            h = logging.StreamHandler()
+            h.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+            rl.addHandler(h)
+            rl.setLevel(logging.WARNING)
+            hc = HerrChef(self.name,command)
+            curtime = strftime("%Y-%m-%d;%H:%M:%S")
+            reporthost = hc.reporthost
+            name = self.name
+            if level is not None:
+                info = "%s;%s"%(level,message)
+            else:
+                info = message
+            larm = "%(command)s;%(curtime)s;%(reporthost)s;%(name)s;%(info)s\r\n"%locals()
+            hc.connect()
+            if not hc.connected:
+                return
+            hc.send(larm)
+            hc.socket.shutdown(SHUT_RDWR)
+            hc.socket.close()
+        except Exception as e:
+            print("Warning: Could not contact herrchef %r"%(e,))
+    def reportToHerrChef(self, command):
+        self.sendToHerrChef(command)
     def larmToHerrChef(self, message, level):
-        from pysvt.herrchef import HerrChef
-        hc = HerrChef(self.name,"LARM")
-        curtime = strftime("%Y-%m-%d;%H:%M:%S")
-        reporthost = hc.reporthost
-        name = self.name
-        larm = "LARM;%(curtime)s;%(reporthost)s;%(name)s;%(level)s;%(message)s\r\n"%locals()
-        hc.send(larm)
-        hc.socket.shutdown(SHUT_RDWR)
-        hc.socket.close()
-
+        self.sendToHerrChef("LARM", message, level)
     def setTraceCallback(self, callback):
         self.traceparser = TraceParser(callback)
 
@@ -116,6 +138,7 @@ class RunAsDaemon:
             return False
 
     def run(self):
+        self.reportToHerrChef("START")
         stopfile = "%s.stop"%self.pidfile
         if os.path.exists(stopfile):
             os.unlink(stopfile)
@@ -230,6 +253,7 @@ class RunAsDaemon:
         return len(pids)
 
     def stop(self, force=False, sigterm = False):
+        self.reportToHerrChef("STOP")
         if sigterm:
             self.signum = 15
         if not force or sigterm:
