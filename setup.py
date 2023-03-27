@@ -46,7 +46,7 @@ setup(
     keywords="Python example package",
     url="https://github.com/SVT/daemonctl",
     long_description=read("README.md"),
-    long_description_content_type="text/markdown",
+    long_description_content_type='text/markdown',
     packages = [package],
     package_dir={package:"src"},
     include_package_data=True,

@@ -33,6 +33,7 @@ from socket import gethostname
 from threading import Thread
 from .daemonlog import Logger,LogLevel
 from .daemonconfig import Config, EnvironConfig
+from .socketpoller import SocketPoller
 
 # SVT specific
 try:
@@ -86,6 +87,7 @@ stopconditions = [] # List with function that can tell main loop to exit
 log = Logger("main")
 
 sockModules = [] # List of added socket modules
+socketpoller = SocketPoller()
 # Old
 #shouldstop = False # Loop variable
 
@@ -123,10 +125,12 @@ class FileChanged:
         except Exception:
             return False
 
-def init(modulename=None, autoreload=False, usecfg=True, cfgtypes=False, logformat=None, loglevel=None, basiclogger=True, version=None, disablegc=False):
+def init(modulename=None, autoreload=False, usecfg=True, cfgtypes=False, logformat=None, loglevel=None, basiclogger=True, version=None, disablegc=False, usenewpoll=False):
     """Initializes logging and other subsystems"""
-    global modname,msgsrv,stopconditions,opts,args,storage,log,cfg,configfile,hc
+    global modname,msgsrv,stopconditions,opts,args,storage,log,cfg,configfile,hc,poll
     try:
+        if usenewpoll:
+            poll = newpoll
         if disablegc is True:
             # Speed up python by disabling Garbage Collection
             # https://instagram-engineering.com/dismissing-python-garbage-collection-at-instagram-4dca40b29172
@@ -211,11 +215,22 @@ def shouldStop():
             return True
     return False
 
-def poll(timeout):
+def newpoll(timeout):
+    # Poll is faster if using socketpoller.add and socketpoller.remove
+    #  instead of getSockets() and handleSockets()
+    inl = sum([x.getSockets() for x in sockModules],[])
+    ins = socketpoller.poll(inl, timeout)    
+    for m in sockModules:
+        m.handleSockets(ins)
+
+def oldpoll(timeout):
+    # Should not be used when select.poll works
     inl = sum([x.getSockets() for x in sockModules],[])
     ins,outs,errs = select(inl,[],[],timeout)
     for m in sockModules:
         m.handleSockets(ins)
+
+poll = oldpoll
 
 def serve_forever():
     """Starts mainloop. Handles modules"""
