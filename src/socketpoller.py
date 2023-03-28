@@ -48,6 +48,8 @@ class SocketPoller:
     def poll(self, sockets=None, timeout=None):
         if sockets is not None:
             self.update(sockets)
+        if timeout is not None:
+            timeout = int(timeout*1000)
         socketlist = self.poller.poll(timeout)
         #print(socketlist)
         outsocks = []
